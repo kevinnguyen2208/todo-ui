@@ -1,0 +1,56 @@
+<div class="container">
+    <h1>Todo List</h1>
+    <ul class="list-group">
+      <li *ngFor="let task of tasks" class="list-group-item" [style.background-color]="getPriorityClass(task.priority)">
+        <input type="checkbox" (change)="toggleSelection(task.id)" [checked]="isSelected(task.id)">
+        <div>
+          <strong>Description:</strong> {{ task.description }}
+        </div>
+        <div>
+          <strong>Created On:</strong> {{ task.createdOn | date: 'dd/MM/yyyy HH:mm:ss' }}
+        </div>
+        <div>
+          <strong>Priority:</strong> {{ enumToString(task.priority) }}
+        </div>
+      </li>
+      
+    </ul>
+
+    <button [disabled]="selectedTaskIds.length > 0" (click)="openModal()">Add Task</button>
+    <button [disabled]="selectedTaskIds.length === 0" (click)="deleteSelectedTasks()">Remove Tasks</button>
+  </div>
+  
+  <ng-template #taskModal let-modal>
+    <section class="modal-template">
+      <div class="modal-header">
+        <h4 class="modal-title">Create Task</h4>
+      </div>
+  
+      <form #taskForm="ngForm" (ngSubmit)="addTask()">
+        <div class="modal-body overflow-scroll-y">
+          <div class="form-group row align-items-center">
+            <label class="col-md-4 col-form-label font-weight-bold" for="description">Description</label>
+            <div class="col-md-8">
+              <input type="text" class="form-control" id="description" name="description" required [(ngModel)]="task.description" #description="ngModel" 
+              [ngClass]="{ 'is-invalid': description.invalid }"/>
+            </div>
+          </div>
+      
+          <div class="form-group row align-items-center">
+            <label class="col-md-4 col-form-label font-weight-bold" for="priority">Priority</label>
+            <div class="col-md-8">
+              <select class="form-control" id="priority" name="priority" required [(ngModel)]="task.priority" #priority="ngModel">
+                <option *ngFor="let option of priorityOptions" [ngValue]="option.id">{{ option.name }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      
+        <div class="modal-footer">
+          <button type="button" class="btn btn-line-orange btn-min-width" (click)="closeModal()">Cancel</button>
+          <button type="submit" class="btn btn-orange btn-min-width" [disabled]="taskForm.invalid">Save</button>
+        </div>
+      </form>
+      
+    </section>
+  </ng-template>
